@@ -34,7 +34,7 @@ def get_transcript(
     try:
         result = download_transcript(video, preferred_languages=preferred_languages)
         return result.to_dict()
-    except TranscriptDownloadError as e:
+    except (TranscriptDownloadError, ValueError) as e:
         raise HTTPException(status_code=400, detail=str(e)) from e
     except Exception as e:
         raise HTTPException(status_code=500, detail="Error interno del servidor") from e

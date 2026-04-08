@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import sys
 from pathlib import Path
 
 from ghost_yt_downloader import TranscriptDownloadError, download_transcript
@@ -39,8 +40,8 @@ def main() -> int:
 
     try:
         result = download_transcript(args.video, preferred_languages=languages)
-    except TranscriptDownloadError as exc:
-        print(f"Error: {exc}")
+    except (TranscriptDownloadError, ValueError) as exc:
+        print(f"Error: {exc}", file=sys.stderr)
         return 1
 
     if args.as_json:

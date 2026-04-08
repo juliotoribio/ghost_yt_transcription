@@ -38,6 +38,7 @@ share/python-wheels/
 .vscode/
 *.swp
 *.swo
+.DS_Store
 
 # Project specific
 transcripcion.txt

@@ -42,6 +42,9 @@ share/python-wheels/
 
 # Project specific
 transcripcion.txt
+transcripcion_*.txt
+ghost_saas.db
+*.db
 pr_output.txt
 .pytest_cache/
 .ruff_cache/

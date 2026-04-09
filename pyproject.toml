@@ -17,11 +17,23 @@ ignore = [
 ]
 
 [tool.ruff.lint.isort]
-known-first-party = ["ghost_yt_downloader"]
+known-first-party = [
+    "ghost_yt_downloader",
+    "main",
+    "saas_service",
+    "saas_store",
+]
 
 [tool.mypy]
 python_version = "3.11"
-files = ["ghost_yt_downloader.py", "download_transcript.py", "main.py"]
+files = [
+    "ghost_yt_downloader.py",
+    "download_transcript.py",
+    "main.py",
+    "manage_api_keys.py",
+    "saas_service.py",
+    "saas_store.py",
+]
 warn_unused_configs = true
 check_untyped_defs = true
 ignore_missing_imports = true

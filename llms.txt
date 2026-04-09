@@ -1,0 +1,74 @@
+# Ghost YT Downloader SaaS API
+
+Ghost YT Downloader is a local SaaS-style API for extracting YouTube transcripts.
+
+Primary use cases:
+- create one transcript job
+- create a batch of transcript jobs
+- poll job or batch status
+- authenticate with X-API-Key
+
+Authentication:
+- header: X-API-Key
+- default local key: ghost-dev-key
+- key management CLI: python3 manage_api_keys.py
+
+Core endpoints:
+- GET /health
+- POST /v1/transcripts
+- GET /v1/transcripts/{transcript_id}
+- POST /v1/batches
+- GET /v1/batches/{batch_id}
+- GET /v1/batches/{batch_id}/items
+- GET /api/transcript (legacy synchronous endpoint, not recommended for SaaS clients)
+
+Single transcript flow:
+1. POST /v1/transcripts with JSON body:
+   {"video":"dQw4w9WgXcQ","languages":["es","en"]}
+2. Receive 202 Accepted with transcript job metadata.
+3. Poll GET /v1/transcripts/{id} until status is completed or failed.
+
+Batch flow:
+1. POST /v1/batches with JSON body:
+   {"videos":["dQw4w9WgXcQ","https://www.youtube.com/watch?v=5X26m52lMwU"],"languages":["es","en"]}
+2. Receive 202 Accepted with batch metadata.
+3. Poll GET /v1/batches/{id} for aggregate status.
+4. Poll GET /v1/batches/{id}/items for per-item results.
+
+Transcript job statuses:
+- queued
+- processing
+- completed
+- failed
+
+Batch statuses:
+- processing
+- completed
+- failed
+- completed_with_errors
+
+Important behavior:
+- transcript text is normalized to a single running text string
+- cache is keyed by video_id + language list
+- repeated single requests may return completed immediately with cached=true
+- invalid video input becomes a failed job or a 400 on the legacy endpoint
+- max batch size is controlled by GHOST_MAX_BATCH_SIZE, default 200
+
+Environment variables:
+- GHOST_DB_PATH
+- GHOST_API_KEY
+- GHOST_WORKER_COUNT
+- GHOST_MAX_BATCH_SIZE
+
+Files worth reading:
+- README.md
+- docs/llm-api-reference.md
+- main.py
+- saas_service.py
+- saas_store.py
+
+If you are an agent integrating this API:
+- prefer /v1/transcripts and /v1/batches over /api/transcript
+- always send X-API-Key
+- treat 202 as accepted work, not completed work
+- poll until terminal status
